@@ -34,13 +34,15 @@
             this.download_progress = new System.Windows.Forms.ProgressBar();
             this.current_download = new System.Windows.Forms.Label();
             this.file_type = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // page_url
             // 
-            this.page_url.Location = new System.Drawing.Point(12, 12);
+            this.page_url.Location = new System.Drawing.Point(42, 12);
             this.page_url.Name = "page_url";
-            this.page_url.Size = new System.Drawing.Size(380, 20);
+            this.page_url.Size = new System.Drawing.Size(316, 20);
             this.page_url.TabIndex = 0;
             // 
             // init_download
@@ -63,7 +65,7 @@
             // 
             // download_progress
             // 
-            this.download_progress.Location = new System.Drawing.Point(12, 380);
+            this.download_progress.Location = new System.Drawing.Point(12, 368);
             this.download_progress.Name = "download_progress";
             this.download_progress.Size = new System.Drawing.Size(516, 23);
             this.download_progress.TabIndex = 4;
@@ -71,7 +73,7 @@
             // current_download
             // 
             this.current_download.AutoSize = true;
-            this.current_download.Location = new System.Drawing.Point(9, 354);
+            this.current_download.Location = new System.Drawing.Point(9, 342);
             this.current_download.Name = "current_download";
             this.current_download.Size = new System.Drawing.Size(54, 13);
             this.current_download.TabIndex = 5;
@@ -79,16 +81,36 @@
             // 
             // file_type
             // 
-            this.file_type.Location = new System.Drawing.Point(398, 12);
+            this.file_type.Location = new System.Drawing.Point(393, 12);
             this.file_type.Name = "file_type";
-            this.file_type.Size = new System.Drawing.Size(49, 20);
+            this.file_type.Size = new System.Drawing.Size(54, 20);
             this.file_type.TabIndex = 1;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(364, 16);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(24, 13);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "ext:";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(13, 16);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(23, 13);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "Url:";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(540, 430);
+            this.ClientSize = new System.Drawing.Size(540, 405);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.file_type);
             this.Controls.Add(this.current_download);
             this.Controls.Add(this.download_progress);
@@ -110,6 +132,8 @@
         private System.Windows.Forms.ListBox allUrlsListBox;
         private System.Windows.Forms.ProgressBar download_progress;
         private System.Windows.Forms.Label current_download;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
     }
 }
 

@@ -30,14 +30,9 @@ namespace FileDownloader
             String pageUrl = page_url.Text;
             if (pageUrl == "") pageUrl = "http://gurinderhans.me/";
 
-
+            init_download.Text = "Scanning Site";
             var doc = await DownloadPageAsync(pageUrl);
-
-            foreach (HtmlNode link in doc.DocumentNode.SelectNodes("//a[@href]"))
-            {
-                allUrlsListBox.Items.Add(link.Attributes["href"].Value);
-            }
-
+            init_download.Text = "Loaded";
 
             try
             {
@@ -61,11 +56,45 @@ namespace FileDownloader
                     }
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 //MessageBox.Show("Parsing Exception " + ex.Message);
             }
             DownloadFile();
+        }
+
+        private async Task<HtmlAgilityPack.HtmlDocument> DownloadPageAsync(string url)
+        {
+            string result;
+            // ... Use HttpClient.
+            using (HttpClient client = new HttpClient())
+            using (HttpResponseMessage response = await client.GetAsync(url))
+            using (HttpContent content = response.Content)
+            {
+                // ... Read the string.
+                result = await content.ReadAsStringAsync();
+            }
+            var doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(result);
+            return doc;
+        }
+
+        private async Task<string> fileType(string url)
+        {
+            try
+            {
+                // Create a 'WebRequest' with the specified url.
+                WebRequest myWebRequest = WebRequest.Create(url);
+                myWebRequest.Method = "HEAD";
+                // Send the 'WebRequest' and wait for response.
+                WebResponse myWebResponse = await myWebRequest.GetResponseAsync();
+                myWebResponse.Close();
+                return myWebResponse.ContentType;
+            }
+            catch
+            {
+                return GENERIC_ERR;
+            }
         }
 
         private async void DownloadFile()
@@ -76,7 +105,9 @@ namespace FileDownloader
 
                 String fileName = Path.GetFileName(thisUrl);
 
-                var contentType = await fileType(thisUrl);
+                download_progress.Value = 10;
+                //here if scanning new site then set current_download.Text == "Loading";
+                var contentType = await fileType(thisUrl); //NOTE: This line can take 
                 if (contentType.Contains(file_type.Text))// check content type here
                 {
                     WebClient client = new WebClient();
@@ -91,7 +122,11 @@ namespace FileDownloader
                 else DownloadFile();
 
             }
-            else current_download.Text = "Download done"; 
+            else
+            {
+                current_download.Text = "Download done";
+                init_download.Text = "Download";//also set this button to work again when we disable it
+            } 
             // else all downloads are finished
             // End of the download
         }
@@ -139,40 +174,6 @@ namespace FileDownloader
             {
                 return GENERIC_ERR;
             }
-        }
-
-        private async Task<string> fileType(string url)
-        {
-            try
-            {
-                // Create a 'WebRequest' with the specified url.
-                WebRequest myWebRequest = WebRequest.Create(url);
-                myWebRequest.Method = "HEAD";
-                // Send the 'WebRequest' and wait for response.
-                WebResponse myWebResponse = await myWebRequest.GetResponseAsync();
-                myWebResponse.Close();
-                return myWebResponse.ContentType;
-            }
-            catch
-            {
-                return GENERIC_ERR;
-            }
-        }
-
-        private async Task<HtmlAgilityPack.HtmlDocument> DownloadPageAsync(string url)
-        {
-            string result;
-            // ... Use HttpClient.
-            using (HttpClient client = new HttpClient())
-            using (HttpResponseMessage response = await client.GetAsync(url))
-            using (HttpContent content = response.Content)
-            {
-                // ... Read the string.
-                result = await content.ReadAsStringAsync();
-            }
-            var doc = new HtmlAgilityPack.HtmlDocument();
-            doc.LoadHtml(result);
-            return doc;
         }
     }
 }
