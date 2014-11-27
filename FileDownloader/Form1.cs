@@ -28,6 +28,7 @@ namespace FileDownloader
         private string mFilesSavePath = "";
 
         private bool downloadClicked = false;
+        private bool newSite = true;
 
         private async void init_download_Click(object sender, EventArgs e)
         {
@@ -47,15 +48,17 @@ namespace FileDownloader
                     init_download.Text = "Scanning Site";
                     var doc = await DownloadPageAsync(pageUrl);
                     init_download.Text = "Loaded";
+                    allUrlsListBox.BeginUpdate();
 
                     try
                     {
+                        // create a task for this?
                         foreach (HtmlNode link in doc.DocumentNode.SelectNodes("//a[@href]"))
                         {
                             String fileUrl = fixUrl(pageUrl, link.Attributes["href"].Value);
                             if (fileUrl != GENERIC_ERR)
                             {
-                                allUrlsListBox.Items.Add(link.Attributes["href"].Value);//add to done box
+                                allUrlsListBox.Items.Add(fileUrl);//add to done box
                                 _downloadUrls.Enqueue(fileUrl);//add all urls to queue
                             }
                         }
@@ -70,9 +73,14 @@ namespace FileDownloader
                             }
                         }
                     }
-                    catch { }
+                    catch
+                    {
+                        Console.WriteLine("Parsing Error");
+                    }
+                    allUrlsListBox.EndUpdate();
                     DownloadFile();
                     downloadClicked = true;
+                    newSite = false;
                 }
                 else
                 {
@@ -125,7 +133,8 @@ namespace FileDownloader
                 String fileName = Path.GetFileName(thisUrl);
 
                 download_progress.Value = 10;
-                //here if scanning new site then set current_download.Text == "Loading";
+                if (newSite) current_download.Text = "Loading";
+                //here if scanning new site then set current_download.Text = "Loading";
                 var contentType = await fileType(thisUrl); //NOTE: This line can take time
                 if (contentType.Contains(file_type.Text))// check content type here
                 {
@@ -148,6 +157,7 @@ namespace FileDownloader
                 init_download.Text = "Download";//also set this button to work again when we disable it
                 download_progress.Value = 100;
                 downloadClicked = false;
+                newSite = true;
             } 
             // else all downloads are finished
             // End of the download
@@ -175,27 +185,43 @@ namespace FileDownloader
 
         private string fixUrl(string mainurl, string relativeUrl)
         {
+            string returnUrl = "";
             try
             {
-                if (relativeUrl.Contains("http")) return relativeUrl;
+                if (relativeUrl.Contains("http"))
+                {
+                    returnUrl = relativeUrl;
+                }
                 else
                 {
-                    // Create an absolute Uri from a string.
-                    Uri absoluteUri = new Uri(mainurl);
+                    //filter stuff such as #id links and mail links
+                    if (relativeUrl[0] == '#' || relativeUrl[0] == '@') returnUrl = GENERIC_ERR;
+                    else
+                    {
+                        // Create an absolute Uri from a string.
+                        Uri absoluteUri = new Uri(mainurl);
 
-                    // Create a relative Uri from a string.  allowRelative = true to allow for  
-                    // creating a relative Uri.
-                    Uri relativeUri = new Uri(relativeUrl, UriKind.Relative);
+                        // Create a relative Uri from a string.  allowRelative = true to allow for  
+                        // creating a relative Uri.
+                        Uri relativeUri = new Uri(relativeUrl, UriKind.Relative);
 
-                    // Create a new Uri from an absolute Uri and a relative Uri.
-                    Uri combinedUri = new Uri(absoluteUri, relativeUri);
-                    return combinedUri.ToString();
+                        // Create a new Uri from an absolute Uri and a relative Uri.
+                        Uri combinedUri = new Uri(absoluteUri, relativeUri);
+                        returnUrl = combinedUri.ToString();
+                    }
                 }
+
+                returnUrl = System.Net.WebUtility.HtmlDecode(returnUrl);
+
+                //take out the link itself and to do that
+                //we bring them on the same level, then compare
+                if (new Uri(returnUrl) == new Uri(mainurl)) returnUrl = GENERIC_ERR;
             }
             catch
             {
-                return GENERIC_ERR;
+                returnUrl = GENERIC_ERR;
             }
+            return returnUrl;
         }
 
         private void allUrlsListBox_SelectedIndexChanged(object sender, EventArgs e)

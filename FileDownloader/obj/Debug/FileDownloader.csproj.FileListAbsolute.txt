@@ -18,7 +18,6 @@ C:\Users\ghans\Documents\Visual Studio 2013\Projects\WindowsFileDownloader\FileD
 C:\Users\ghans\Documents\Visual Studio 2013\Projects\WindowsFileDownloader\FileDownloader\bin\Debug\HtmlAgilityPack.dll
 C:\Users\ghans\Documents\Visual Studio 2013\Projects\WindowsFileDownloader\FileDownloader\bin\Debug\HtmlAgilityPack.pdb
 C:\Users\ghans\Documents\Visual Studio 2013\Projects\WindowsFileDownloader\FileDownloader\bin\Debug\HtmlAgilityPack.xml
-C:\Users\ghans\Documents\Visual Studio 2013\Projects\WindowsFileDownloader\FileDownloader\obj\Debug\FileDownloader.csprojResolveAssemblyReference.cache
 C:\Users\ghans\Documents\Visual Studio 2013\Projects\WindowsFileDownloader\FileDownloader\obj\Debug\FileDownloader.Form1.resources
 C:\Users\ghans\Documents\Visual Studio 2013\Projects\WindowsFileDownloader\FileDownloader\obj\Debug\FileDownloader.Properties.Resources.resources
 C:\Users\ghans\Documents\Visual Studio 2013\Projects\WindowsFileDownloader\FileDownloader\obj\Debug\FileDownloader.csproj.GenerateResource.Cache
@@ -26,3 +25,4 @@ C:\Users\ghans\Documents\Visual Studio 2013\Projects\WindowsFileDownloader\FileD
 C:\Users\ghans\Documents\Visual Studio 2013\Projects\WindowsFileDownloader\FileDownloader\bin\Debug\FileDownloader.application
 C:\Users\ghans\Documents\Visual Studio 2013\Projects\WindowsFileDownloader\FileDownloader\obj\Debug\FileDownloader.exe.manifest
 C:\Users\ghans\Documents\Visual Studio 2013\Projects\WindowsFileDownloader\FileDownloader\obj\Debug\FileDownloader.application
+C:\Users\ghans\Documents\Visual Studio 2013\Projects\WindowsFileDownloader\FileDownloader\obj\Debug\FileDownloader.csprojResolveAssemblyReference.cache
