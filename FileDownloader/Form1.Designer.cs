@@ -36,6 +36,7 @@
             this.file_type = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.choose_folder = new System.Windows.Forms.FolderBrowserDialog();
             this.SuspendLayout();
             // 
             // page_url
@@ -62,6 +63,7 @@
             this.allUrlsListBox.Name = "allUrlsListBox";
             this.allUrlsListBox.Size = new System.Drawing.Size(516, 290);
             this.allUrlsListBox.TabIndex = 3;
+            this.allUrlsListBox.SelectedIndexChanged += new System.EventHandler(this.allUrlsListBox_SelectedIndexChanged);
             // 
             // download_progress
             // 
@@ -134,6 +136,7 @@
         private System.Windows.Forms.Label current_download;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.FolderBrowserDialog choose_folder;
     }
 }
 

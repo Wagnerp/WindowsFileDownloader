@@ -17,7 +17,7 @@ namespace FileDownloader
     public partial class Form1 : Form
     {
 
-        public string GENERIC_ERR = "network_error";
+        public string GENERIC_ERR = "some_generic_error";
         public Form1()
         {
             InitializeComponent();
@@ -25,42 +25,61 @@ namespace FileDownloader
 
         private Queue<string> _downloadUrls = new Queue<string>();
 
+        private string mFilesSavePath = "";
+
+        private bool downloadClicked = false;
+
         private async void init_download_Click(object sender, EventArgs e)
         {
             String pageUrl = page_url.Text;
             if (pageUrl == "") pageUrl = "http://gurinderhans.me/";
 
-            init_download.Text = "Scanning Site";
-            var doc = await DownloadPageAsync(pageUrl);
-            init_download.Text = "Loaded";
+            if (!downloadClicked)
+            {
+                //maybe a default save path - Desktop unless user clickes download while holding some key to change the path
+                //then this opens --- LATER
+                var result = choose_folder.ShowDialog();
+                // OK button was pressed. 
+                if (result == DialogResult.OK)
+                {
+                    mFilesSavePath = choose_folder.SelectedPath;
 
-            try
-            {
-                foreach (HtmlNode link in doc.DocumentNode.SelectNodes("//a[@href]"))
-                {
-                    String fileUrl = fixUrl(pageUrl, link.Attributes["href"].Value);
-                    if (fileUrl != GENERIC_ERR)
+                    init_download.Text = "Scanning Site";
+                    var doc = await DownloadPageAsync(pageUrl);
+                    init_download.Text = "Loaded";
+
+                    try
                     {
-                        allUrlsListBox.Items.Add(link.Attributes["href"].Value);//add to done box
-                        _downloadUrls.Enqueue(fileUrl);//add all urls to queue
+                        foreach (HtmlNode link in doc.DocumentNode.SelectNodes("//a[@href]"))
+                        {
+                            String fileUrl = fixUrl(pageUrl, link.Attributes["href"].Value);
+                            if (fileUrl != GENERIC_ERR)
+                            {
+                                allUrlsListBox.Items.Add(link.Attributes["href"].Value);//add to done box
+                                _downloadUrls.Enqueue(fileUrl);//add all urls to queue
+                            }
+                        }
+                        //images in progress
+                        foreach (HtmlNode link in doc.DocumentNode.SelectNodes("//img[@src]"))
+                        {
+                            String fileUrl = fixUrl(pageUrl, link.Attributes["src"].Value);
+                            if (fileUrl != GENERIC_ERR)
+                            {
+                                allUrlsListBox.Items.Add(fileUrl);
+                                _downloadUrls.Enqueue(fileUrl);//add all urls to queue
+                            }
+                        }
                     }
+                    catch { }
+                    DownloadFile();
+                    downloadClicked = true;
                 }
-                //images in progress
-                foreach (HtmlNode link in doc.DocumentNode.SelectNodes("//img[@src]"))
+                else
                 {
-                    String fileUrl = fixUrl(pageUrl, link.Attributes["src"].Value);
-                    if (fileUrl != GENERIC_ERR)
-                    {
-                        allUrlsListBox.Items.Add(fileUrl);
-                        _downloadUrls.Enqueue(fileUrl);//add all urls to queue
-                    }
+                    //tell user to pick folder again
+                    MessageBox.Show("Please choose a folder where you want to save the files.");
                 }
             }
-            catch
-            {
-                //MessageBox.Show("Parsing Exception " + ex.Message);
-            }
-            DownloadFile();
         }
 
         private async Task<HtmlAgilityPack.HtmlDocument> DownloadPageAsync(string url)
@@ -107,7 +126,7 @@ namespace FileDownloader
 
                 download_progress.Value = 10;
                 //here if scanning new site then set current_download.Text == "Loading";
-                var contentType = await fileType(thisUrl); //NOTE: This line can take 
+                var contentType = await fileType(thisUrl); //NOTE: This line can take time
                 if (contentType.Contains(file_type.Text))// check content type here
                 {
                     WebClient client = new WebClient();
@@ -117,7 +136,8 @@ namespace FileDownloader
                     current_download.Text = "Downloading: " + thisUrl;
 
                     // Starts the download
-                    client.DownloadFileAsync(new Uri(thisUrl), @"C:\Users\ghans\Desktop\downloads\" + fileName + "");
+                    //we dont need to check for path null because only way we get here is if we have a path
+                    client.DownloadFileAsync(new Uri(thisUrl), @""+mFilesSavePath+"\\" + fileName + "");
                 }
                 else DownloadFile();
 
@@ -126,6 +146,8 @@ namespace FileDownloader
             {
                 current_download.Text = "Download done";
                 init_download.Text = "Download";//also set this button to work again when we disable it
+                download_progress.Value = 100;
+                downloadClicked = false;
             } 
             // else all downloads are finished
             // End of the download
@@ -174,6 +196,11 @@ namespace FileDownloader
             {
                 return GENERIC_ERR;
             }
+        }
+
+        private void allUrlsListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            System.Windows.Forms.Clipboard.SetText(allUrlsListBox.GetItemText(allUrlsListBox.SelectedItem));
         }
     }
 }
