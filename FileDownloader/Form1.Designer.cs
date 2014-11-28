@@ -37,18 +37,19 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.choose_folder = new System.Windows.Forms.FolderBrowserDialog();
+            this.deep_scan = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // page_url
             // 
             this.page_url.Location = new System.Drawing.Point(42, 12);
             this.page_url.Name = "page_url";
-            this.page_url.Size = new System.Drawing.Size(316, 20);
+            this.page_url.Size = new System.Drawing.Size(220, 20);
             this.page_url.TabIndex = 0;
             // 
             // init_download
             // 
-            this.init_download.Location = new System.Drawing.Point(453, 10);
+            this.init_download.Location = new System.Drawing.Point(358, 10);
             this.init_download.Name = "init_download";
             this.init_download.Size = new System.Drawing.Size(75, 23);
             this.init_download.TabIndex = 2;
@@ -83,7 +84,7 @@
             // 
             // file_type
             // 
-            this.file_type.Location = new System.Drawing.Point(393, 12);
+            this.file_type.Location = new System.Drawing.Point(298, 12);
             this.file_type.Name = "file_type";
             this.file_type.Size = new System.Drawing.Size(54, 20);
             this.file_type.TabIndex = 1;
@@ -91,7 +92,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(364, 16);
+            this.label1.Location = new System.Drawing.Point(268, 16);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(24, 13);
             this.label1.TabIndex = 6;
@@ -106,11 +107,23 @@
             this.label2.TabIndex = 7;
             this.label2.Text = "Url:";
             // 
+            // deep_scan
+            // 
+            this.deep_scan.AutoSize = true;
+            this.deep_scan.Location = new System.Drawing.Point(448, 14);
+            this.deep_scan.Name = "deep_scan";
+            this.deep_scan.Size = new System.Drawing.Size(80, 17);
+            this.deep_scan.TabIndex = 8;
+            this.deep_scan.Text = "Deep Scan";
+            this.deep_scan.UseVisualStyleBackColor = true;
+            this.deep_scan.CheckedChanged += new System.EventHandler(this.deep_scan_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(540, 405);
+            this.Controls.Add(this.deep_scan);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.file_type);
@@ -137,6 +150,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.FolderBrowserDialog choose_folder;
+        private System.Windows.Forms.CheckBox deep_scan;
     }
 }
 

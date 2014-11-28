@@ -37,8 +37,8 @@ namespace FileDownloader
 
             if (!downloadClicked)
             {
-                //maybe a default save path - Desktop unless user clickes download while holding some key to change the path
-                //then this opens --- LATER
+                //(maybe a default save path - Desktop unless user clickes download while holding some key to change the path
+                //then this opens) --- LATER
                 var result = choose_folder.ShowDialog();
                 // OK button was pressed. 
                 if (result == DialogResult.OK)
@@ -52,7 +52,6 @@ namespace FileDownloader
 
                     try
                     {
-                        // create a task for this?
                         foreach (HtmlNode link in doc.DocumentNode.SelectNodes("//a[@href]"))
                         {
                             String fileUrl = fixUrl(pageUrl, link.Attributes["href"].Value);
@@ -146,7 +145,11 @@ namespace FileDownloader
 
                     // Starts the download
                     //we dont need to check for path null because only way we get here is if we have a path
-                    client.DownloadFileAsync(new Uri(thisUrl), @""+mFilesSavePath+"\\" + fileName + "");
+                    if (file_type.Text.Contains("htm"))
+                    {
+                        client.DownloadFileAsync(new Uri(thisUrl), @"" + mFilesSavePath + "\\" + fileName + "."+file_type.Text);
+                    }
+                    else client.DownloadFileAsync(new Uri(thisUrl), @"" + mFilesSavePath + "\\" + fileName + "");
                 }
                 else DownloadFile();
 
@@ -185,17 +188,17 @@ namespace FileDownloader
 
         private string fixUrl(string mainurl, string relativeUrl)
         {
-            string returnUrl = "";
+            string url = "";
             try
             {
                 if (relativeUrl.Contains("http"))
                 {
-                    returnUrl = relativeUrl;
+                    url = relativeUrl;
                 }
                 else
                 {
                     //filter stuff such as #id links and mail links
-                    if (relativeUrl[0] == '#' || relativeUrl[0] == '@') returnUrl = GENERIC_ERR;
+                    if (relativeUrl[0] == '#' || relativeUrl[0] == '@') url = GENERIC_ERR;
                     else
                     {
                         // Create an absolute Uri from a string.
@@ -207,26 +210,60 @@ namespace FileDownloader
 
                         // Create a new Uri from an absolute Uri and a relative Uri.
                         Uri combinedUri = new Uri(absoluteUri, relativeUri);
-                        returnUrl = combinedUri.ToString();
+                        url = combinedUri.ToString();
                     }
                 }
 
-                returnUrl = System.Net.WebUtility.HtmlDecode(returnUrl);
+                url = System.Net.WebUtility.HtmlDecode(url);
 
                 //take out the link itself and to do that
                 //we bring them on the same level, then compare
-                if (new Uri(returnUrl) == new Uri(mainurl)) returnUrl = GENERIC_ERR;
+                if (new Uri(url) == new Uri(mainurl)) url = GENERIC_ERR;
             }
             catch
             {
-                returnUrl = GENERIC_ERR;
+                url = GENERIC_ERR;
             }
-            return returnUrl;
+
+            if (!file_type.Text.Contains("htm"))//check for html pages explicitly
+            {
+                if (url.Contains(".htm")) url = GENERIC_ERR;
+            }
+
+            //deep scan decision here
+            if(deep_scan.CheckState != CheckState.Checked)
+            {
+                string type = file_type.Text;
+                //only get the ones with the the filetype extension
+                if (type == "image")
+                {
+                    string[] imageFileTypes = new string[] { ".bmp", ".gif", ".jpg", ".jpeg", ".png", ".psd", ".pspimage", ".thm", ".tif", ".yuv" };
+                    bool contains = false;
+                    foreach(string e_type in imageFileTypes){
+                        if (url.Contains(e_type))
+                        {
+                            contains = true;
+                            break;
+                        }
+                    }
+                    if (!contains) url = GENERIC_ERR;
+                }
+                else  if (!url.Contains(type)) url = GENERIC_ERR;
+            }
+            return url;
         }
 
         private void allUrlsListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            System.Windows.Forms.Clipboard.SetText(allUrlsListBox.GetItemText(allUrlsListBox.SelectedItem));
+            System.Windows.Forms.Clipboard.SetText(allUrlsListBox.GetItemText(allUrlsListBox.SelectedItem));//check for nullity
+        }
+
+        private void deep_scan_CheckedChanged(object sender, EventArgs e)
+        {
+            if (deep_scan.CheckState == CheckState.Checked)
+            {
+                MessageBox.Show("Only enable if you think not everything is being downloaded");
+            }
         }
     }
 }
